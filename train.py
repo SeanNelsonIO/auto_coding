@@ -20,7 +20,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Hyper params')
     parser.add_argument('--model_select', type=str, default="distilgpt2",
                         help='model select from distilgpt2, gpt2_medium, gpt2, or gpt2_large')
-    parser.add_argument('--dataset_name', type=str, default="source_code",
+    parser.add_argument('--dataset_name', type=str, default="source_code2",
                         help='dataset name whatever name you put into the ./dataset directory (by default: source_code)')
     parser.add_argument('--per_gpu_train_batch_size', type=int, default=4,
                         help='input batch size for training')

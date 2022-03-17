@@ -16,20 +16,21 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     gpt2_tok = GPT2Tokenizer.from_pretrained("gpt2", do_lower_case=False)
-    paths = ['Python', 'Java']
+    # paths = ['Python', 'Java', '~/Documents/powelectrics']
     segments = {}
 
-    for path in paths:
-        source_files = glob.glob(f'{path}/**/*.py' if path == "Python" else f'{path}/**/*.java', recursive=True)
-        for each_src in tqdm(source_files):
-            with open(each_src, "r", encoding="utf-8") as f:
-                code_content = f.read()
-                encoded = gpt2_tok.encode(code_content)
-                for i in range(len(encoded) // args.stride):
-                    seg = encoded[i * args.stride:i * args.stride + args.segment_len]
-                    if path not in segments:
-                        segments[path] = []
-                    segments[path].append(json.dumps({"token_ids": seg, "label": path}))
+    # for path in paths:
+    path = '//Users/seannelson/dissertation/auto_coding/dataset/al/powelectrics/services/project/'
+    source_files = glob.glob(f'{path}/**/*.py', recursive=True)
+    for each_src in tqdm(source_files):
+        with open(each_src, "r", encoding="utf-8") as f:
+            code_content = f.read()
+            encoded = gpt2_tok.encode(code_content)
+            for i in range(len(encoded) // args.stride):
+                seg = encoded[i * args.stride:i * args.stride + args.segment_len]
+                if path not in segments:
+                    segments[path] = []
+                segments[path].append(json.dumps({"token_ids": seg, "label": path}))
 
     train, dev = [], []
     for key in segments:

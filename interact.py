@@ -49,14 +49,31 @@ if __name__ == '__main__':
         input_ids = tokenizer.encode("<python> " + context,
                                      return_tensors='pt') if lang == "python" else tokenizer.encode(
             "<java> " + context, return_tensors='pt')
+        
+        print(input_ids)
         outputs = model.generate(input_ids=input_ids.to("cuda") if args.use_cuda else input_ids,
                                  max_length=args.max_length,
                                  temperature=args.temperature,
                                  num_return_sequences=1)
-        for i in range(1):
-            decoded = tokenizer.decode(outputs[i], skip_special_tokens=True)
-            # ends with occurence of double new lines (to meet the convention of code completion)
-            if "\n\n" in decoded:
-                decoded = decoded[:decoded.index("\n\n")]
 
-            print('Generated {}: {}'.format(i, decoded))
+        beam_outputs = model.generate(
+            input_ids, 
+            max_length=128, 
+            num_beams=5, 
+            early_stopping=True,
+            num_return_sequences=5
+        )
+        
+        for i in range(5):
+            # decoded = tokenizer.decode(outputs[i], skip_special_tokens=True)
+            beam_decoded = tokenizer.decode(beam_outputs[i], skip_special_tokens=True)
+            # ends with occurence of double new lines (to meet the convention of code completion)
+            # if "\n\n" in decoded:
+            #     decoded = decoded[:decoded.index("\n\n")]
+
+            if "\n\n" in beam_decoded:
+                beam_decoded = beam_decoded[:beam_decoded.index("\n\n")]
+
+            # print('Generated {}: {}'.format(i, decoded))
+
+            print('beam Generated {}: {}'.format(i, beam_decoded))
